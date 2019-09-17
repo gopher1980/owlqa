@@ -1,0 +1,20 @@
+{
+  "step1": {
+    "action": "start",
+    "message": "ok"
+  },
+  "step2": {
+    "action": "open",
+    "message": "ok"
+  },
+  "step3": {
+    "action": "text",
+    "message": "ok",
+    "string": "selection 'XPath: //*[@id=\"new-id-290\"]/div[2] [single]'",
+    "text": "MESAS DE FINAL SETIEMBRE 2019"
+  },
+  "step4": {
+    "action": "click",
+    "message": "ok"
+  }
+}

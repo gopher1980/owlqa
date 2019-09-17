@@ -1,0 +1,27 @@
+{
+  "step1": {
+    "method": "start",
+    "input": {
+      "duration": 10
+    }
+  },
+  "step2": {
+    "method": "open",
+    "input": {
+      "url": "http://siga.frba.utn.edu.ar/"
+    }
+  },
+  "step3": {
+    "method": "text",
+    "input": {
+      "strategy": "xpath",
+      "selector": "//*[@id=\"new-id-290\"]/div[2]"
+    }
+  },
+  "step4": {
+    "method": "click",
+    "input": {
+      "selector": "#page-try"
+    }
+  }
+}
