@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/gin-gonic/gin v1.4.0 // indirect
-	github.com/gopher1980/dynql v0.0.5
+	github.com/gopher1980/dynql v0.0.7 // indirect
 	github.com/gopher1980/gormcrud v0.2.1
 	github.com/gorilla/mux v1.7.3
 	github.com/jinzhu/gorm v1.9.10

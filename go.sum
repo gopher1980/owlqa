@@ -49,6 +49,8 @@ github.com/gopher1980/dynql v0.0.4 h1:ZQS0ceHIBEed5IUciwgDCabDTAgctPCf5eKczH3aj8
 github.com/gopher1980/dynql v0.0.4/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
 github.com/gopher1980/dynql v0.0.5 h1:EAG/YxuV41X2uwFEApX/r3GJoNyYHG/54dkvaPDFRWA=
 github.com/gopher1980/dynql v0.0.5/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
+github.com/gopher1980/dynql v0.0.7 h1:DeUB5JE9dPeVu0G6B3hEb1gZwiV2Sz1pfuBQio5Int8=
+github.com/gopher1980/dynql v0.0.7/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
 github.com/gopher1980/gormcrud v0.2.1 h1:k6k/CMCuS7jyQZ8GYwQtq3T7mlat8AirAf4/Fap4tc0=
 github.com/gopher1980/gormcrud v0.2.1/go.mod h1:8M7Kz2zVA5FnmRwnfgj9YykwxPINzCLD9RxiQay8gG0=
 github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=
