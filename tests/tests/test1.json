@@ -6,22 +6,40 @@
     }
   },
   "step2": {
-    "method": "open",
+    "method": "web.navigate",
     "input": {
       "url": "http://siga.frba.utn.edu.ar/"
     }
   },
   "step3": {
-    "method": "text",
+    "method": "web.text",
     "input": {
       "strategy": "xpath",
       "selector": "//*[@id=\"new-id-290\"]/div[2]"
-    }
-  },
-  "step4": {
-    "method": "click",
-    "input": {
-      "selector": "#page-try"
+    },
+    "next":{
+      "step4": {
+        "method": "web.click",
+        "input": {
+          "condition": "parent.text == 'MESAS DE FINAL SETIEMBRE 2019'",
+          "strategy": "css",
+          "selector": "#page-try"
+        }
+      },
+      "step5": {
+        "method": "log",
+        "input": {
+          "condition": "parent.text == 'MESAS DE FINAL SETIEMBRE 2019'",
+          "value": "esto es un log"
+        }
+      },
+      "step6": {
+        "method": "web.click",
+        "input": {
+          "condition": "payload.text == 'MESAS DE FINAL SETIEMBRE 2019'",
+          "selector": "#menu-page-pub > p:nth-child(4) > a:nth-child(1)"
+        }
+      }
     }
   }
 }
