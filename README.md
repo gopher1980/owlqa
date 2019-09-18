@@ -5,6 +5,8 @@
 - add storage by gormcrud
 - add duration for page in start action
 - add condition step
+- add hidden step
+- add name step
 
 for primitive js:
 - add FindInStorage
