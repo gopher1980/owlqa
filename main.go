@@ -4,26 +4,29 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/gopher1980/dynql"
-	"github.com/gopher1980/gormcrud"
-	"github.com/sclevine/agouti"
 	"strings"
 	"time"
 
-	"github.com/robertkrimen/otto"
+	"github.com/gopher1980/dynql"
+	"github.com/gopher1980/gormcrud"
+	"github.com/sclevine/agouti"
+
 	"io/ioutil"
 	"os"
+
+	"github.com/robertkrimen/otto"
+
+	"log"
+	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"log"
-	"net/http"
 )
 
 const (
-	FREQUENCY_DEFAULT = 10
-	RETRY_DEFAULT     = 1000
+	frequencyDefault = 10
+	retryDefault     = 1000
 )
 
 var (
@@ -52,6 +55,7 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+// Storage is struct for save data for test
 type Storage struct {
 	ID        uint       `gorm:"primary_key" json:"id" `
 	CreatedAt time.Time  `json:"created_at"`
@@ -65,12 +69,13 @@ type Storage struct {
 	//Retry     int64      `json:"retry"`
 }
 
+// Param recive in method
 type Param struct {
 	Session   string `json:"session"`
 	Value     string `json:"value"`
 	Option    string `json:"option"`
 	Browser   string `json:"browser"`
-	Url       string `json:"url"`
+	URL       string `json:"url"`
 	Condition string `json:"condition"`
 	Selector  string `json:"selector"`
 	Strategy  string `json:"strategy"`
@@ -79,6 +84,7 @@ type Param struct {
 	Retry     int64  `json:"retry"`
 }
 
+// ReturnStep is generic return
 type ReturnStep struct {
 	Message string `json:"message"`
 	Action  string `json:"action"`
@@ -134,7 +140,7 @@ func destroy(name string, ptr interface{}, r *http.Request, payload interface{},
 
 }
 
-func Find(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func find(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.Find(selector)
 	count, err := elem.Count()
@@ -147,7 +153,7 @@ func Find(page *agouti.Page, selector string, frequency int, retry int) *agouti.
 	return elem
 }
 
-func FindByXPath(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByXPath(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByXPath(selector)
 	count, err := elem.Count()
@@ -160,7 +166,7 @@ func FindByXPath(page *agouti.Page, selector string, frequency int, retry int) *
 	return elem
 }
 
-func FindByClass(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByClass(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByClass(selector)
 	count, err := elem.Count()
@@ -173,7 +179,7 @@ func FindByClass(page *agouti.Page, selector string, frequency int, retry int) *
 	return elem
 }
 
-func FindByID(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByID(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByID(selector)
 	count, err := elem.Count()
@@ -186,7 +192,7 @@ func FindByID(page *agouti.Page, selector string, frequency int, retry int) *ago
 	return elem
 }
 
-func FindByLink(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByLink(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByLink(selector)
 	count, err := elem.Count()
@@ -199,7 +205,7 @@ func FindByLink(page *agouti.Page, selector string, frequency int, retry int) *a
 	return elem
 }
 
-func FindByName(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByName(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByName(selector)
 	count, err := elem.Count()
@@ -212,7 +218,7 @@ func FindByName(page *agouti.Page, selector string, frequency int, retry int) *a
 	return elem
 }
 
-func FindByButton(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByButton(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByButton(selector)
 	count, err := elem.Count()
@@ -225,7 +231,7 @@ func FindByButton(page *agouti.Page, selector string, frequency int, retry int) 
 	return elem
 }
 
-func FindByLabel(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
+func findByLabel(page *agouti.Page, selector string, frequency int, retry int) *agouti.Selection {
 	i := 0
 	elem := page.FindByLabel(selector)
 	count, err := elem.Count()
@@ -238,49 +244,49 @@ func FindByLabel(page *agouti.Page, selector string, frequency int, retry int) *
 	return elem
 }
 
-func FindByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) *agouti.Selection {
+func findByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) *agouti.Selection {
 
 	if frequency == 0 {
-		frequency = FREQUENCY_DEFAULT
+		frequency = frequencyDefault
 	}
 
 	if retry == 0 {
-		retry = RETRY_DEFAULT
+		retry = retryDefault
 	}
 
 	if strategy == "xpath" {
-		return FindByXPath(page, selector, frequency, retry)
+		return findByXPath(page, selector, frequency, retry)
 	}
 	if strategy == "name" {
-		return FindByName(page, selector, frequency, retry)
+		return findByName(page, selector, frequency, retry)
 	}
 	if strategy == "class" {
-		return FindByClass(page, selector, frequency, retry)
+		return findByClass(page, selector, frequency, retry)
 	}
 	if strategy == "id" {
-		return FindByID(page, selector, frequency, retry)
+		return findByID(page, selector, frequency, retry)
 	}
 	if strategy == "link" {
-		return FindByLink(page, selector, frequency, retry)
+		return findByLink(page, selector, frequency, retry)
 	}
 	if strategy == "button" {
-		return FindByButton(page, selector, frequency, retry)
+		return findByButton(page, selector, frequency, retry)
 	}
 
 	if strategy == "label" {
-		return FindByLabel(page, selector, frequency, retry)
+		return findByLabel(page, selector, frequency, retry)
 	}
 	if strategy == "storage" {
-		storage, _, exists := FindInStorage(selector)
+		storage, _, exists := findInStorage(selector)
 		if !exists {
 			return nil
 		}
-		return FindByStrategy(page, storage.Strategy, storage.Selector, frequency, retry)
+		return findByStrategy(page, storage.Strategy, storage.Selector, frequency, retry)
 	}
-	return Find(page, selector, frequency, retry)
+	return find(page, selector, frequency, retry)
 }
 
-func WaitHide(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHide(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.Find(selector)
 	count, _ := elem.Count()
@@ -296,7 +302,7 @@ func WaitHide(page *agouti.Page, selector string, frequency int, retry int) bool
 	return true
 }
 
-func WaitHideByLink(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByLink(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByLink(selector)
 	count, _ := elem.Count()
@@ -312,7 +318,7 @@ func WaitHideByLink(page *agouti.Page, selector string, frequency int, retry int
 	return true
 }
 
-func WaitHideByLabel(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByLabel(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByLabel(selector)
 	count, _ := elem.Count()
@@ -328,7 +334,7 @@ func WaitHideByLabel(page *agouti.Page, selector string, frequency int, retry in
 	return true
 }
 
-func WaitHideByID(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByID(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByID(selector)
 	count, _ := elem.Count()
@@ -344,7 +350,7 @@ func WaitHideByID(page *agouti.Page, selector string, frequency int, retry int) 
 	return true
 }
 
-func WaitHideByXPath(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByXPath(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByXPath(selector)
 	count, _ := elem.Count()
@@ -360,7 +366,7 @@ func WaitHideByXPath(page *agouti.Page, selector string, frequency int, retry in
 	return true
 }
 
-func WaitHideByClass(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByClass(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByClass(selector)
 	count, _ := elem.Count()
@@ -376,7 +382,7 @@ func WaitHideByClass(page *agouti.Page, selector string, frequency int, retry in
 	return true
 }
 
-func WaitHideByName(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByName(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByName(selector)
 	count, _ := elem.Count()
@@ -392,7 +398,7 @@ func WaitHideByName(page *agouti.Page, selector string, frequency int, retry int
 	return true
 }
 
-func WaitHideByButton(page *agouti.Page, selector string, frequency int, retry int) bool {
+func waitHideByButton(page *agouti.Page, selector string, frequency int, retry int) bool {
 	i := 0
 	elem := page.FindByButton(selector)
 	count, _ := elem.Count()
@@ -408,51 +414,51 @@ func WaitHideByButton(page *agouti.Page, selector string, frequency int, retry i
 	return true
 }
 
-func WaitHideByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) bool {
+func waitHideByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) bool {
 
 	if frequency == 0 {
-		frequency = FREQUENCY_DEFAULT
+		frequency = frequencyDefault
 	}
 
 	if retry == 0 {
-		retry = RETRY_DEFAULT
+		retry = retryDefault
 	}
 
 	if strategy == "xpath" {
-		return WaitHideByXPath(page, selector, frequency, retry)
+		return waitHideByXPath(page, selector, frequency, retry)
 	}
 	if strategy == "name" {
-		return WaitHideByName(page, selector, frequency, retry)
+		return waitHideByName(page, selector, frequency, retry)
 	}
 	if strategy == "class" {
-		return WaitHideByClass(page, selector, frequency, retry)
+		return waitHideByClass(page, selector, frequency, retry)
 	}
 	if strategy == "id" {
-		return WaitHideByID(page, selector, frequency, retry)
+		return waitHideByID(page, selector, frequency, retry)
 	}
 	if strategy == "link" {
-		return WaitHideByLink(page, selector, frequency, retry)
+		return waitHideByLink(page, selector, frequency, retry)
 	}
 	if strategy == "button" {
-		return WaitHideByButton(page, selector, frequency, retry)
+		return waitHideByButton(page, selector, frequency, retry)
 	}
 
 	if strategy == "label" {
-		return WaitHideByLabel(page, selector, frequency, retry)
+		return waitHideByLabel(page, selector, frequency, retry)
 	}
 
 	if strategy == "storage" {
-		storage, _, exists := FindInStorage(selector)
+		storage, _, exists := findInStorage(selector)
 		if !exists {
 			return false
 		}
-		return WaitHideByStrategy(page, storage.Strategy, storage.Selector, frequency, retry)
+		return waitHideByStrategy(page, storage.Strategy, storage.Selector, frequency, retry)
 	}
 
-	return WaitHide(page, selector, frequency, retry)
+	return waitHide(page, selector, frequency, retry)
 }
 
-func FindInStorage(name string) (Storage, int64, bool) {
+func findInStorage(name string) (Storage, int64, bool) {
 	var count int64
 	storage := Storage{}
 	db.Where("name = ?", name).Find(&storage).Count(&count)
@@ -465,8 +471,8 @@ func FindInStorage(name string) (Storage, int64, bool) {
 
 }
 
-func WaitShowByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) bool {
-	elem := FindByStrategy(page, strategy, selector, frequency, retry)
+func waitShowByStrategy(page *agouti.Page, strategy string, selector string, frequency int, retry int) bool {
+	elem := findByStrategy(page, strategy, selector, frequency, retry)
 	if elem == nil {
 		return false
 	}
@@ -514,13 +520,13 @@ func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, p
 			if !condition {
 				bytes, _ := json.Marshal(payload)
 				mapPayload := make(map[string]interface{})
-				_ =json.Unmarshal(bytes, &mapPayload)
+				_ = json.Unmarshal(bytes, &mapPayload)
 				mapPayload["action"] = "!" + name
 				mapPayload["message"] = "return false condition"
 				return mapPayload
 			}
 		} else {
-			return ReturnStep{Message: "Condition return not boolean", Action: name,}
+			return ReturnStep{Message: "Condition return not boolean", Action: name}
 		}
 
 	}
@@ -537,10 +543,10 @@ func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, p
 	_ = vm.Set("Microsecond", time.Microsecond)
 	_ = vm.Set("Nanosecond", time.Nanosecond)
 
-	_ = vm.Set("WaitShowByStrategy", WaitShowByStrategy)
-	_ = vm.Set("WaitHideByStrategy", WaitHideByStrategy)
-	_ = vm.Set("Find", FindByStrategy)
-	_ = vm.Set("FindInStorage", FindInStorage)
+	_ = vm.Set("WaitShowByStrategy", waitShowByStrategy)
+	_ = vm.Set("WaitHideByStrategy", waitHideByStrategy)
+	_ = vm.Set("Find", findByStrategy)
+	_ = vm.Set("FindInStorage", findInStorage)
 
 	code := "function action { return {message:'action no exists'}; };\n"
 	method := "action"
@@ -621,6 +627,10 @@ func main() {
 	dql.Put("destroy", destroy, Param{})
 
 	r := mux.NewRouter()
+
+	r.PathPrefix("/site/").Handler(http.StripPrefix("/site/", http.FileServer(http.Dir("site/"))))
+	r.PathPrefix("/webassembly/").Handler(http.StripPrefix("/webassembly/", http.FileServer(http.Dir("webassembly/"))))
+
 	gormcrud.MapMux(r, db).NewMap("/storage", Storage{}, []Storage{}).Full()
 	r.HandleFunc("/run", dql.Run).Methods(http.MethodPost)
 	http.Handle("/", r)

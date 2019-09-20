@@ -11,7 +11,7 @@ function fill() {
 }
 
 function navigate() {
-    page.Navigate(param.Url);
+    page.Navigate(param.URL);
     return {message: "ok", action: "web.navigate"}
 }
 
