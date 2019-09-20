@@ -5,8 +5,9 @@ go 1.13
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0 // indirect
-	github.com/golang/protobuf v1.3.2 // indirect
+
 	github.com/gopher1980/dynql v0.0.9
+
 	github.com/gopher1980/gormcrud v0.2.1
 	github.com/gorilla/mux v1.7.3
 	github.com/jinzhu/gorm v1.9.10
