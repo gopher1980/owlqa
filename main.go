@@ -69,6 +69,16 @@ type Storage struct {
 	//Retry     int64      `json:"retry"`
 }
 
+// Catalog is
+type Catalog struct {
+	ID        uint       `gorm:"primary_key" json:"id" `
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+	Name      string     `json:"name"`
+	Code      string     `json:"code"`
+}
+
 // Param recive in method
 type Param struct {
 	Session   string `json:"session"`
@@ -609,14 +619,14 @@ func main() {
 
 	flag.Parse()
 
-	db, err = gorm.Open("sqlite3", "./storage.sqlite")
+	db, err = gorm.Open("sqlite3", "./storage.db")
 	if err != nil {
 		panic("failed to connect database")
 	}
 	defer db.Close()
 	db.SingularTable(true)
 	db.AutoMigrate(&Storage{})
-	db.Exec("PRAGMA foreign_keys = ON;")
+	db.AutoMigrate(&Catalog{})
 
 	pages = make(map[string]*agouti.Page)
 	fmt.Println("OwlQA v0.0.1")
@@ -631,6 +641,7 @@ func main() {
 	r.PathPrefix("/site/").Handler(http.StripPrefix("/site/", http.FileServer(http.Dir("site/"))))
 	r.PathPrefix("/webassembly/").Handler(http.StripPrefix("/webassembly/", http.FileServer(http.Dir("webassembly/"))))
 
+	gormcrud.MapMux(r, db).NewMap("/catalog", Catalog{}, []Catalog{}).Full()
 	gormcrud.MapMux(r, db).NewMap("/storage", Storage{}, []Storage{}).Full()
 	r.HandleFunc("/run", dql.Run).Methods(http.MethodPost)
 	http.Handle("/", r)

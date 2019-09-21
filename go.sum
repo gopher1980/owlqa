@@ -60,6 +60,10 @@ github.com/gopher1980/dynql v0.0.8 h1:pEx8aFkPPfnPFo1WnwRH+xkUMbwz4UJK4hKDGzY5Fu
 github.com/gopher1980/dynql v0.0.8/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
 github.com/gopher1980/dynql v0.0.9 h1:6dlIXYsD0Qf1KpHJRhub1JCYlQkKcWmErQZqyYldfkY=
 github.com/gopher1980/dynql v0.0.9/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
+github.com/gopher1980/dynql v0.0.11 h1:ZkBoOSI0EezMW6ls892GZLHPA3YP/WZrsy2hwHI2bdU=
+github.com/gopher1980/dynql v0.0.11/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
+github.com/gopher1980/dynql v0.0.12 h1:v8DVrNDecnRxSn+S1F9zreKQLwop42c4iqEvG1DpRSY=
+github.com/gopher1980/dynql v0.0.12/go.mod h1:ezM8OTvbOIpt4EdHO27AyotBiK5LP4k4HV4p86EEVRw=
 github.com/gopher1980/gormcrud v0.2.1 h1:k6k/CMCuS7jyQZ8GYwQtq3T7mlat8AirAf4/Fap4tc0=
 github.com/gopher1980/gormcrud v0.2.1/go.mod h1:8M7Kz2zVA5FnmRwnfgj9YykwxPINzCLD9RxiQay8gG0=
 github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=

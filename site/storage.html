@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+
+<head>
+   <title>OwlQA</title>
+
+   <style>
+      body {
+         color: #d3d3d3;
+         font: 12pt arial;
+         background-color: #ffffff;
+      }
+   </style>
+
+
+   <script src="js/jquery.js"></script>
+   </script>
+
+
+   <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+   <link rel="stylesheet" href="css/app.css" />
+   <script src="bootstrap/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body>
+
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">OwlQA</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+         <ul class="navbar-nav mr-auto">
+            <li class="nav-item ">
+               <a class="nav-link " href="/site/catalog.html">Catalog<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+               <a class="nav-link" href="/site/storage.html">Storage<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item ">
+               <a class="nav-link" href="/site/">Console</a>
+            </li>
+         </ul>
+         <div class="form-inline my-2 my-lg-0">
+         </div>
+      </div>
+   </nav>
+
+   <br />
+
+   <div class="container">
+      <div class="table-wrapper">
+         <div class="table-title">
+            <div class="row">
+               <div class="col-sm-6">
+                  <h2>Manage <b id="title"></b></h2>
+               </div>
+               <div class="col-sm-6">
+
+               </div>
+            </div>
+         </div>
+         <table class="table table-striped table-hover">
+            <thead>
+               <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+               </tr>
+            </thead>
+            <tbody id="list">
+
+            </tbody>
+         </table>
+         <div class="clearfix">
+            <div class="hint-text">Showing <b id="show"></b> out of <b id="count"></b> entries</div>
+            <ul class="pagination">
+               <li class="page-item disabled"><a href="#">Previous</a></li>
+               <li class="page-item active"><a href="#" class="page-link">1</a></li>
+               <li class="page-item"><a href="#" class="page-link">2</a></li>
+               <li class="page-item "><a href="#" class="page-link">3</a></li>
+               <li class="page-item"><a href="#" class="page-link">Next</a></li>
+            </ul>
+         </div>
+      </div>
+   </div>
+
+   <!-- Delete Modal HTML -->
+   <div id="delete" class="modal fade">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <form>
+               <div class="modal-header">
+                  <h4 class="modal-title">Delete Test</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               </div>
+               <div class="modal-body">
+                  <p>Are you sure you want to delete the Record <b id="id"> <b>?</p>
+               </div>
+               <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                  <input type="button" class="btn btn-danger" value="Delete" onclick="real_delete()">
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+
+
+   <script>
+      var url = "/storage"
+      $("#title").html("Storage")
+
+      var page = 1
+      var limit = 5
+      var globalId = -1;
+
+      function refresh() {
+         $.get(url + ".page?page=" + page + "&limit=30", function (data) {
+            var html = ""
+            data.records.forEach(function (data) {
+               html += `<tr>  
+                  <td>${data.id}</td>
+                  <td>${data.name}</td>
+                  <td style="text-align: left;">
+                        
+                     <a href="/site/?id=${data.id}" class="edit" ><i class="material-icons" title="Go">view_quilt</i></a>
+                     <a href="#" onclick="delete_show('${data.id}')" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  </td>
+               </tr>`
+            })
+            $("#show").html(data.records.length)
+            $("#count").html(data.total_record)
+            $("#list").html(html)
+         })
+      }
+      refresh()
+      function delete_show(id) {
+         globalId = id
+         $("#id").html(id)
+         $("#delete").modal("show")
+      }
+
+      function real_delete() {
+         $("#delete").modal("hide")
+         $.ajax({
+            url: url + "/" + globalId,
+            type: "DELETE"
+         })
+         globalId = -1
+         refresh()
+
+      }
+   </script>
+
+   <script type="text/javascript" src="js/app.js?_=22"></script>
+</body>
+
+</html>
