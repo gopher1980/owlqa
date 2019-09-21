@@ -14,6 +14,7 @@
 
 
    <script src="js/jquery.js"></script>
+   <script src="js/crud.js"></script>
    </script>
 
 
@@ -57,10 +58,11 @@
          <div class="table-title">
             <div class="row">
                <div class="col-sm-6">
-                  <h2>Manage <b id="title"></b></h2>
+                  <h2>Manage <b class="title"></b></h2>
                </div>
                <div class="col-sm-6">
-
+                  <a href="#" onclick="openModal()" class="btn btn-success" data-toggle="modal"><i
+                        class="material-icons">&#xE147;</i> <span>Add New <b class="title"></b></span></a>
                </div>
             </div>
          </div>
@@ -69,6 +71,9 @@
                <tr>
                   <th>Id</th>
                   <th>Name</th>
+                  <th>Strategy</th>
+                  <th>Selector</th>
+                  <th>Value</th>
                   <th>Actions</th>
                </tr>
             </thead>
@@ -78,7 +83,7 @@
          </table>
          <div class="clearfix">
             <div class="hint-text">Showing <b id="show"></b> out of <b id="count"></b> entries</div>
-            <ul class="pagination">
+            <ul class="pagination" id="pagination">
                <li class="page-item disabled"><a href="#">Previous</a></li>
                <li class="page-item active"><a href="#" class="page-link">1</a></li>
                <li class="page-item"><a href="#" class="page-link">2</a></li>
@@ -89,13 +94,54 @@
       </div>
    </div>
 
+
+   <!-- Add Modal HTML -->
+   <div id="addElementModal" class="modal fade">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <form>
+               <div class="modal-header">
+                  <h4 class="modal-title"><b class="title"></b></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               </div>
+               <div class="modal-body">
+                     <div class="form-group">
+                           <label>ID</label>
+                           <input id="element_id" type="text" class="form-control element"   readonly />
+                        </div>
+                  <div class="form-group">
+                     <label>Name</label>
+                     <input id="element_name" type="text" class="form-control element" required />
+                  </div>
+                  <div class="form-group">
+                     <label>Strategy</label>
+                     <input id="element_strategy" type="text" class="form-control element" required />
+                  </div>
+                  <div class="form-group">
+                     <label>Selector</label>
+                     <input id="element_selector" type="text" class="form-control element" required />
+                  </div>
+                  <div class="form-group">
+                     <label>Value</label>
+                     <input id="element_value" ype="text" class="form-control element" />
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" />
+                  <input type="button" class="btn btn-success" value="Save" onclick="saveElement()" />
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+
    <!-- Delete Modal HTML -->
    <div id="delete" class="modal fade">
       <div class="modal-dialog">
          <div class="modal-content">
             <form>
                <div class="modal-header">
-                  <h4 class="modal-title">Delete Test</h4>
+                  <h4 class="modal-title">Delete <b class="title"></b></h4>
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                </div>
                <div class="modal-body">
@@ -103,7 +149,7 @@
                </div>
                <div class="modal-footer">
                   <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                  <input type="button" class="btn btn-danger" value="Delete" onclick="real_delete()">
+                  <input type="button" class="btn btn-danger" value="Delete" onclick="real_delete(refresh)">
                </div>
             </form>
          </div>
@@ -113,22 +159,53 @@
 
    <script>
       var url = "/storage"
-      $("#title").html("Storage")
+      $(".title").html("Storage")
 
       var page = 1
       var limit = 5
       var globalId = -1;
 
+      function saveElement() {
+         var id = parseInt($("#element_id").val())
+         var element = {
+            id: id,
+            name: $("#element_name").val(),
+            strategy: $("#element_strategy").val(),
+            selector: $("#element_selector").val(),
+            value: $("#element_value").val()
+         }
+
+
+         $.post(url, JSON.stringify(element)).done(function (data) {
+            if (data.Error == null) {
+               refresh()
+               $("#addElementModal").modal("hide")
+            } else {
+               alert(JSON.stringify(data))
+            }
+         })
+
+
+
+
+
+      }
+
       function refresh() {
-         $.get(url + ".page?page=" + page + "&limit=30", function (data) {
+         parameters = new URLSearchParams(window.location.search);
+         page = parameters.get("page")
+         if (page == null) page =1
+         $.get(url + ".page?page=" + page + "&limit=5", function (data) {
             var html = ""
             data.records.forEach(function (data) {
                html += `<tr>  
-                  <td>${data.id}</td>
-                  <td>${data.name}</td>
+                  <td><div class="cut-text">${data.id}</div></td>
+                  <td><div class="cut-text">${data.name}</div></td>
+                  <td><div class="cut-text">${data.strategy}</div></td>
+                  <td><div class="cut-text">${data.selector}</div></td>
+                  <td><div class="cut-text">${data.value}</div></td>
                   <td style="text-align: left;">
-                        
-                     <a class="edit" ><i class="material-icons" title="Go">view_quilt</i></a>
+                     <a class="edit" onclick="editElement('${data.id}')" ><i class="material-icons" title="Edit">&#xE254;</i></a>
                      <a href="#" onclick="delete_show('${data.id}')" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                   </td>
                </tr>`
@@ -136,25 +213,30 @@
             $("#show").html(data.records.length)
             $("#count").html(data.total_record)
             $("#list").html(html)
+            pagination(data.page)
          })
       }
       refresh()
-      function delete_show(id) {
-         globalId = id
-         $("#id").html(id)
-         $("#delete").modal("show")
+
+
+      function openModal(){
+         $('.element').val('')
+         $("#addElementModal").modal("show")
       }
 
-      function real_delete() {
-         $("#delete").modal("hide")
-         $.ajax({
-            url: url + "/" + globalId,
-            type: "DELETE"
+
+      function editElement(id){
+         $('.element').val('')
+         $.get(url+"/"+id, function(data){
+            $("#element_id").val(data.id);
+            $("#element_name").val(data.name);
+            $("#element_strategy").val(data.strategy);
+            $("#element_selector").val(data.selector);
+            $("#element_value").val(data.value);
+            $("#addElementModal").modal("show")
          })
-         globalId = -1
-         refresh()
-
       }
+
    </script>
 
    <script type="text/javascript" src="js/app.js?_=22"></script>

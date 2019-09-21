@@ -5,6 +5,15 @@ body {
     font-size: 13px;
 }
 
+.cut-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100px;
+    height: 1.2em;
+    white-space: nowrap;
+}
+
+
 .table-wrapper {
     background: #fff;
     padding: 20px 25px;
@@ -274,9 +283,11 @@ table.table .avatar {
     font-style: normal;
     font-weight: 400;
     src: url(/site/css/icons.woff2) format('woff2');
-  }
-  
-  .material-icons {
+}
+
+
+
+.material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
@@ -290,4 +301,4 @@ table.table .avatar {
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
+}
