@@ -91,7 +91,7 @@ function save(){
     }
     $.post("/catalog", JSON.stringify(element)).done(function(data){
         if (data.Error==null){
-            window.location.replace("/site/?id="+data.Value.id);
+            window.location.replace("/site/console.html?id="+data.Value.id);
         }else{
             alert(JSON.stringify(data))
         }

@@ -638,6 +638,9 @@ func main() {
 
 	r := mux.NewRouter()
 
+	rh := http.RedirectHandler("/site/queries.html", 307)
+	r.Handle("/", rh)
+
 	r.PathPrefix("/site/").Handler(http.StripPrefix("/site/", http.FileServer(http.Dir("site/"))))
 	r.PathPrefix("/webassembly/").Handler(http.StripPrefix("/webassembly/", http.FileServer(http.Dir("webassembly/"))))
 
