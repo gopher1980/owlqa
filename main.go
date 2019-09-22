@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	resty "github.com/go-resty/resty/v2"
 	"github.com/gopher1980/dynql"
 	"github.com/gopher1980/gormcrud"
 	"github.com/sclevine/agouti"
@@ -102,6 +103,7 @@ type Param struct {
 	Duration  int64  `json:"duration"`
 	Frequency int64  `json:"frequency"`
 	Retry     int64  `json:"retry"`
+	CheckPage bool   `json:"check_page"`
 }
 
 // ReturnStep is generic return
@@ -503,6 +505,15 @@ func waitShowByStrategy(page *agouti.Page, strategy string, selector string, fre
 	return true
 }
 
+func newClientResty() *resty.Client {
+	return resty.New()
+}
+func unmarshal(str string) map[string]interface{} {
+	ret := make(map[string]interface{})
+	json.Unmarshal([]byte(str), &ret)
+	return ret
+}
+
 //  brew install chromedriver
 func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, parent interface{}) interface{} {
 	var err error
@@ -513,9 +524,10 @@ func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, p
 	}
 	page := pages[skey]
 
-	if page == nil {
+	if page == nil && p.CheckPage {
 		return ReturnStep{Message: "page nil", Action: name}
 	}
+
 	vm := otto.New()
 	_ = vm.Set("payload", payload)
 	if payload != nil {
@@ -567,6 +579,9 @@ func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, p
 	_ = vm.Set("WaitHideByStrategy", waitHideByStrategy)
 	_ = vm.Set("Find", findByStrategy)
 	_ = vm.Set("FindInStorage", findInStorage)
+	_ = vm.Set("NewClientResty", newClientResty)
+
+	_ = vm.Set("Unmarshal", unmarshal)
 
 	code := "function action { return {message:'action no exists'}; };\n"
 	method := "action"
