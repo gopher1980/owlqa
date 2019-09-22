@@ -69,6 +69,16 @@ type Storage struct {
 	//Retry     int64      `json:"retry"`
 }
 
+// Actions is struct for save data for test
+type Action struct {
+	ID        uint       `gorm:"primary_key" json:"id" `
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+	Name      string     `json:"name" gorm:"unique_index:action_name"`
+	Code      string     `json:"code"`
+}
+
 // Catalog is
 type Catalog struct {
 	ID        uint       `gorm:"primary_key" json:"id" `
@@ -567,11 +577,12 @@ func jsRun(name string, ptr interface{}, r *http.Request, payload interface{}, p
 		method = v[1]
 	}
 
-	if fileExists("actions/" + name + ".js") {
-		code = file2str("actions/" + name + ".js")
-	} else {
+	action := Action{}
+	ret := db.Where("name = ?", name).Find(&action)
+	if ret.RowsAffected == 0 {
 		return ReturnStep{Message: "action not found", Action: name}
 	}
+	code = action.Code
 
 	result, err := vm.Run(code + "\n  " + method + "()")
 	if err != nil {
@@ -627,6 +638,7 @@ func main() {
 	db.SingularTable(true)
 	db.AutoMigrate(&Storage{})
 	db.AutoMigrate(&Catalog{})
+	db.AutoMigrate(&Action{})
 
 	pages = make(map[string]*agouti.Page)
 	fmt.Println("OwlQA v0.0.1")
@@ -644,6 +656,7 @@ func main() {
 	r.PathPrefix("/site/").Handler(http.StripPrefix("/site/", http.FileServer(http.Dir("site/"))))
 	r.PathPrefix("/webassembly/").Handler(http.StripPrefix("/webassembly/", http.FileServer(http.Dir("webassembly/"))))
 
+	gormcrud.MapMux(r, db).NewMap("/action", Action{}, []Action{}).Full()
 	gormcrud.MapMux(r, db).NewMap("/catalog", Catalog{}, []Catalog{}).Full()
 	gormcrud.MapMux(r, db).NewMap("/storage", Storage{}, []Storage{}).Full()
 	r.HandleFunc("/run", dql.Run).Methods(http.MethodPost)

@@ -16,7 +16,6 @@
          height: 99%;
          border: 1px solid #444444;
          background-color: #dddddd;
-
       }
 
       .CodeMirror {
@@ -34,13 +33,17 @@
    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
    <script src="bootstrap/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="css/app.css" />
+   <link rel="stylesheet" href="css/justcontext.css" />
 
+
+
+
+
+   <script type="text/javascript" src="js/justcontext.js"></script>
 
    <script type="text/javascript" src="codemirror/lib/codemirror.js"></script>
-   <script type="text/javascript" src="codemirror/mode/javascript/javascript.js"></script>
-   
    <script src="js/jsonlint.js"></script>
-
+   <script type="text/javascript" src="codemirror/mode/javascript/javascript.js"></script>
    <script type="text/javascript" src="codemirror/addon/selection/active-line.js"></script>
    <script type="text/javascript" src="codemirror/addon/edit/matchbrackets.js"></script>
    <script type="text/javascript" src="codemirror/addon/scroll/simplescrollbars.js"></script>
@@ -53,13 +56,15 @@
    <script type="text/javascript" src="codemirror/addon/fold/foldcode.js"></script>
    <script type="text/javascript" src="codemirror/addon/fold/brace-fold.js"></script>
    <script type="text/javascript" src="codemirror/keymap/sublime.js"></script>
-
-
-
    <script type="text/javascript" src="codemirror/addon/lint/lint.js"></script>
    <script type="text/javascript" src="codemirror/addon/lint/json-lint.js"></script>
 
-
+   <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+   <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
+   <link rel="stylesheet" type="text/css" href="css/docs.css" />
+   <link rel="stylesheet" href="codemirror/addon/fold/foldgutter.css">
+   <link rel="stylesheet" href="codemirror/addon/dialog/dialog.css">
+   <link rel="stylesheet" type="text/css" href="codemirror/theme/dracula.css" />
 
 
 
@@ -67,13 +72,7 @@
    <link href="css/vis-network.min.css" rel="stylesheet" type="text/css" />
 
 
-   <link rel="stylesheet" href="codemirror/lib/codemirror.css">
-   <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
-   <link rel="stylesheet" type="text/css" href="css/docs.css" />
-   <link rel="stylesheet" href="codemirror/addon/fold/foldgutter.css">
-   <link rel="stylesheet" href="codemirror/addon/dialog/dialog.css">
 
-   <link rel="stylesheet" type="text/css" href="codemirror/theme/dracula.css" />
 
 
 
@@ -96,6 +95,9 @@
             <li class="nav-item ">
                <a class="nav-link" href="/site/storage.html">Storage<span class="sr-only">(current)</span></a>
             </li>
+            <li class="nav-item ">
+               <a class="nav-link" href="/site/actions.html">Actions<span class="sr-only">(current)</span></a>
+            </li>
             <li class="nav-item active">
                <a class="nav-link" href="/site/console.html">Console</a>
             </li>
@@ -116,7 +118,7 @@
    <div class="container-fluid">
       <div class="row">
          <div class="col-sm-3">
-            <div id="mynetwork"></div>
+            <div id="mynetwork" clas="jctx-host jctx-id-foo"></div>
          </div>
          <div class="col-sm-9">
             <textarea id="code" name="code">{}</textarea>
@@ -184,7 +186,17 @@
          </div>
       </div>
    </div>
+   <span id="eventSpan"></span>
 
+   <ul class="jctx jctx-id-foo jctx-black jctx-black-shadow">
+      <li data-action="cut">Cut</li>
+      <li data-action="copy">Copy</li>
+      <li data-action="paste">Paste</li>
+      <hr>
+      <li data-action="new_pkg">New package</li>
+      <li data-action="new_cls">New class</li>
+      <li data-action="new_intf" class="disabled">New interface (a disabled entry)</li>
+   </ul>
 
 
    <script>
@@ -234,7 +246,7 @@
          }
       });
    </script>
-   <script type="text/javascript" src="js/app.js?_=121"></script>
+   <script type="text/javascript" src="js/app.js?_=0"></script>
 </body>
 
 </html>

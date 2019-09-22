@@ -43,6 +43,9 @@
                <a class="nav-link" href="/site/storage.html">Storage<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item ">
+               <a class="nav-link" href="/site/actions.html">Actions<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item ">
                <a class="nav-link" href="/site/console.html">Console</a>
             </li>
          </ul>
@@ -118,7 +121,7 @@
       function refresh() {
          parameters = new URLSearchParams(window.location.search);
          page = parameters.get("page")
-         if (page == null) page =1
+         if (page == null) page = 1
          $.get(url + ".page?page=" + page + "&limit=5", function (data) {
             var html = ""
             data.records.forEach(function (data) {

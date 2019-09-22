@@ -15,7 +15,7 @@
   position: fixed;
   white-space: pre;
   white-space: pre-wrap;
-  z-index: 100;
+  z-index: 1060;
   max-width: 600px;
   opacity: 0;
   transition: opacity .4s;
@@ -28,6 +28,7 @@
 .CodeMirror-lint-mark-error, .CodeMirror-lint-mark-warning {
   background-position: left bottom;
   background-repeat: repeat-x;
+  z-index: 1060;
 }
 
 .CodeMirror-lint-mark-error {
@@ -47,6 +48,7 @@
   display: inline-block;
   height: 16px;
   width: 16px;
+  z-index: 1060;
   vertical-align: middle;
   position: relative;
 }
@@ -55,14 +57,17 @@
   padding-left: 18px;
   background-position: top left;
   background-repeat: no-repeat;
+  z-index: 1060;
 }
 
 .CodeMirror-lint-marker-error, .CodeMirror-lint-message-error {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAHlBMVEW7AAC7AACxAAC7AAC7AAAAAAC4AAC5AAD///+7AAAUdclpAAAABnRSTlMXnORSiwCK0ZKSAAAATUlEQVR42mWPOQ7AQAgDuQLx/z8csYRmPRIFIwRGnosRrpamvkKi0FTIiMASR3hhKW+hAN6/tIWhu9PDWiTGNEkTtIOucA5Oyr9ckPgAWm0GPBog6v4AAAAASUVORK5CYII=");
+  z-index: 1060;
 }
 
 .CodeMirror-lint-marker-warning, .CodeMirror-lint-message-warning {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAANlBMVEX/uwDvrwD/uwD/uwD/uwD/uwD/uwD/uwD/uwD6twD/uwAAAADurwD2tQD7uAD+ugAAAAD/uwDhmeTRAAAADHRSTlMJ8mN1EYcbmiixgACm7WbuAAAAVklEQVR42n3PUQqAIBBFUU1LLc3u/jdbOJoW1P08DA9Gba8+YWJ6gNJoNYIBzAA2chBth5kLmG9YUoG0NHAUwFXwO9LuBQL1giCQb8gC9Oro2vp5rncCIY8L8uEx5ZkAAAAASUVORK5CYII=");
+  z-index: 1060;
 }
 
 .CodeMirror-lint-marker-multiple {
@@ -70,4 +75,5 @@
   background-repeat: no-repeat;
   background-position: right bottom;
   width: 100%; height: 100%;
+  z-index: 1060;
 }
